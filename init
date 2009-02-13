@@ -1,0 +1,77 @@
+#!/bin/ash
+# Copyright 2007-2008 Mike Kelly <pioto@pioto.org>
+# Released under the terms of the GNU General Public License v2
+#
+# An init script for initramfs, for loading a system with tuxonice and a
+# dm-crypt encrypted swap device.
+#
+# Based upon a script from: http://www.disciplina.net/howto/initscript
+#
+# Modified by Greg Fitzgerald <netzdamon@gmail.com>
+
+PATH="/bin:/sbin:/usr/bin:/usr/sbin"
+
+einfo() { echo -ne " \033[32;01m*\033[0m ${@}\n"; }
+ewarn() { echo -ne " \033[33;01m*\033[0m ${@}\n"; }
+eerror() { echo -ne " \033[31;01m*\033[0m ${@}\n"; }
+
+einfo "Gregf's initramfs booting..."
+
+root="/dev/sda3"
+init="/sbin/init"
+#resume="swap:/dev/mapper/crypt-swap0"
+#resume_real="/dev/mapper/vg0-swap0"
+
+mount -n -t proc none /proc
+mount -n -t sysfs none /sys
+CMDLINE=`cat /proc/cmdline`
+
+for param in $CMDLINE ; do
+	case "$param" in
+		root=*|init=*|resume=*|resume_real=*)
+			eval "$param"
+			;;
+		rescue)
+			rescue="y"
+			;;
+	esac
+done
+
+
+if [ -z "$root" ]; then
+    eerror "No root filesystem specified"
+    eerror "Please append a correct \"root=\" boot option"
+    eerror "Dropping you to a limited shell."
+    eerror "press CTRL-ALT-Del for reboot"
+    exec /bin/sh
+fi
+
+# populate /dev with meaningful stuff
+einfo "Scanning for device nodes..."
+mdev -s
+
+# now, we decrypt our lvm pv
+einfo "Decrypting /dev/sda1..."
+/sbin/cryptsetup luksOpen /dev/sda1 sda1_crypt || exit 1
+
+einfo "Finding lvm devices..."
+/sbin/vgscan --mknodes
+einfo "Activating lvm devices..."
+/sbin/vgchange -a y
+
+einfo "Mounting root device: $root ..."
+mount -n -t ext4 $root /root -o ro
+
+if [ -n "$rescue" ]; then
+	ewarn "\"rescue\" kernel parameter received."
+	ewarn "Going to a rescue shell..."
+	exec /bin/sh
+fi
+
+einfo "Unmounting /sys and /proc ..."
+umount -f /sys /proc
+
+einfo "Changing to $root and handing over to init..."
+exec switch_root -c /dev/console /root "$init" "$@"
+
+# vim: set ft=sh tw=78:
