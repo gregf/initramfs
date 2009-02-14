@@ -19,6 +19,7 @@ einfo "Gregf's initramfs booting..."
 
 root="/dev/mapper/Betsy-root"
 init="/sbin/init"
+modules="dm-crypt dm-mod serpent sha256 blowfish" #Any modules you might need to load
 
 mount -n -t proc none /proc
 mount -n -t sysfs none /sys
@@ -35,6 +36,9 @@ for param in $CMDLINE ; do
 	esac
 done
 
+#wait a little to avoid trailing kernel output
+sleep 3
+
 
 if [ -z "$root" ]; then
     eerror "No root filesystem specified"
@@ -48,6 +52,16 @@ fi
 einfo "Scanning for device nodes..."
 echo /sbin/mdev > /proc/sys/kernel/hotplug
 mdev -s
+
+# Load modules if you are using them.
+einfo "Loading any necessary modules."
+for i in $modules;
+do 
+    modprobe $i >/dev/null 2>&1
+done
+
+# raid
+#mdadm --assemble /dev/md2 /dev/sda2 /dev/sdb2
 
 # now, we decrypt our lvm pv
 einfo "Decrypting /dev/sda2..."
