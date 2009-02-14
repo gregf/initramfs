@@ -20,6 +20,7 @@ einfo "Gregf's initramfs booting..."
 root="/dev/mapper/Betsy-root"
 init="/sbin/init"
 modules="dm-crypt dm-mod serpent sha256 blowfish" #Any modules you might need to load
+shell="/bin/zsh"
 
 mount -n -t proc none /proc
 mount -n -t sysfs none /sys
@@ -45,7 +46,7 @@ if [ -z "$root" ]; then
     eerror "Please append a correct \"root=\" boot option"
     eerror "Dropping you to a limited shell."
     eerror "press CTRL-ALT-Del for reboot"
-    exec /bin/zsh
+    exec $shell 
 fi
 
 # populate /dev with meaningful stuff
@@ -78,7 +79,7 @@ mount -n -t ext3 $root /root -o ro
 if [ -n "$rescue" ]; then
 	ewarn "\"rescue\" kernel parameter received."
 	ewarn "Going to a rescue shell..."
-	exec /bin/zsh
+	exec $shell 
 fi
 
 einfo "Unmounting /sys and /proc ..."
