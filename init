@@ -17,10 +17,8 @@ eerror() { echo -ne " \033[31;01m*\033[0m ${@}\n"; }
 
 einfo "Gregf's initramfs booting..."
 
-root="/dev/sda3"
+root="/dev/mapper/Betsy-root"
 init="/sbin/init"
-#resume="swap:/dev/mapper/crypt-swap0"
-#resume_real="/dev/mapper/vg0-swap0"
 
 mount -n -t proc none /proc
 mount -n -t sysfs none /sys
@@ -28,7 +26,7 @@ CMDLINE=`cat /proc/cmdline`
 
 for param in $CMDLINE ; do
 	case "$param" in
-		root=*|init=*|resume=*|resume_real=*)
+		root=*|init=*)
 			eval "$param"
 			;;
 		rescue)
@@ -43,16 +41,17 @@ if [ -z "$root" ]; then
     eerror "Please append a correct \"root=\" boot option"
     eerror "Dropping you to a limited shell."
     eerror "press CTRL-ALT-Del for reboot"
-    exec /bin/sh
+    exec /bin/zsh
 fi
 
 # populate /dev with meaningful stuff
 einfo "Scanning for device nodes..."
+echo /sbin/mdev > /proc/sys/kernel/hotplug
 mdev -s
 
 # now, we decrypt our lvm pv
-einfo "Decrypting /dev/sda1..."
-/sbin/cryptsetup luksOpen /dev/sda1 sda1_crypt || exit 1
+einfo "Decrypting /dev/sda2..."
+/sbin/cryptsetup luksOpen /dev/sda2 sda2_crypt || exit 1
 
 einfo "Finding lvm devices..."
 /sbin/vgscan --mknodes
@@ -60,12 +59,12 @@ einfo "Activating lvm devices..."
 /sbin/vgchange -a y
 
 einfo "Mounting root device: $root ..."
-mount -n -t ext4 $root /root -o ro
+mount -n -t ext3 $root /root -o ro
 
 if [ -n "$rescue" ]; then
 	ewarn "\"rescue\" kernel parameter received."
 	ewarn "Going to a rescue shell..."
-	exec /bin/sh
+	exec /bin/zsh
 fi
 
 einfo "Unmounting /sys and /proc ..."
