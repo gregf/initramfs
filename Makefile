@@ -15,8 +15,9 @@ clean:
 	mv /boot/my_initramfs.cpio.gz /boot/old_initramfs.cpio.gz
 	rm -f my_initramfs.cpio.gz
 
-extract:
-	#extract initramfs.cpio.gz to tmpdir
-
+extract: my_initramfs.cpio.gz
+	rm -rf init_fs
+	mkdir -p init_fs
+	cd init_fs && zcat ../my_initramfs.cpio.gz | (while true; do cpio -i -d -H newc --no-absolute-filenames >/dev/null 2>&1 || exit 0; done)
 compress:
 	#compress contents for tmpdir
