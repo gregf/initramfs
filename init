@@ -29,8 +29,8 @@ askfor_key() {
         read loc
         echo "Key File: (/secret/keys/mykey.gpg)"
         read key
-        umount -f /mnt 
-        mount ${loc} /mnt || askfor_key
+        umount -f ${key_location} 
+        mount -o ro ${loc} ${key_location} || askfor_key
         if [ -z "${loc}" ] || [ -z "${key}" ]
         then
             ewarn "You have to something dumbass!"
@@ -90,7 +90,7 @@ done
 
 # Mount our usb key drive
 einfo "Mounting key drive..."
-mount $key_drive $key_location
+mount -o ro $key_drive $key_location
 if $debug; then
     einfo "Testing key drive..."
     # Make a real test this is going to pass either way since /usb is already
@@ -111,7 +111,7 @@ einfo "Activating lvm devices..."
 
 # Umount key drive
 einfo "Ejecting key drive..."
-umount -f $key_drive
+umount -f $key_location
 
 einfo "Mounting root device: $root ..."
 mount -n -t ext3 $root /root -o ro
