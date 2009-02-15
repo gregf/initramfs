@@ -21,6 +21,9 @@ dir /lib 0755 0 0
 
 dir /etc 755 0 0
 
+# dir for usb key
+dir /usb 755 0 0
+
 # utilities needed to do anything useful
 dir /bin 0755 0 0
 dir /sbin 0755 0 0
@@ -140,8 +143,6 @@ file /etc/lvm/lvm.conf /etc/lvm/lvm.conf 644 0 0
 file /sbin/lvm /sbin/lvm 555 0 0
 slink /sbin/vgchange lvm 777 0 0
 slink /sbin/vgscan lvm 777 0 0
-# And becasue i'm crazy
-file /bin/zsh /bin/zsh 0755 0 0
 
 dir /var 755 0 0
 dir /var/log 755 0 0
