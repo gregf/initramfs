@@ -15,12 +15,18 @@ einfo() { echo -ne " \033[32;01m*\033[0m ${@}\n"; }
 ewarn() { echo -ne " \033[33;01m*\033[0m ${@}\n"; }
 eerror() { echo -ne " \033[31;01m*\033[0m ${@}\n"; }
 
+#wait a little to avoid trailing kernel output
+sleep 10 
+
 einfo "Gregf's initramfs booting..."
 
 root="/dev/mapper/Betsy-root"
+key_drive="/dev/sdc1"
+key_location="/usb"
+key_name="storage_key.gpg"
 init="/sbin/init"
+debug=false
 modules="dm-crypt dm-mod serpent sha256 blowfish" #Any modules you might need to load
-shell="/bin/zsh"
 
 mount -n -t proc none /proc
 mount -n -t sysfs none /sys
@@ -37,16 +43,12 @@ for param in $CMDLINE ; do
 	esac
 done
 
-#wait a little to avoid trailing kernel output
-sleep 3
-
-
 if [ -z "$root" ]; then
     eerror "No root filesystem specified"
     eerror "Please append a correct \"root=\" boot option"
     eerror "Dropping you to a limited shell."
     eerror "press CTRL-ALT-Del for reboot"
-    exec $shell 
+    exec /bin/sh 
 fi
 
 # populate /dev with meaningful stuff
@@ -64,14 +66,30 @@ done
 # raid
 #mdadm --assemble /dev/md2 /dev/sda2 /dev/sdb2
 
+# Mount our usb key drive
+einfo "Mounting key drive..."
+mount $key_drive $key_location
+if $debug; then
+    einfo "Testing key drive..."
+    # Make a real test this is going to pass either way since /usb is already
+    # created.
+    touch /usb/it_got_mounted || eerror "unable to write to usb key, not being mounted"
+fi
+
 # now, we decrypt our lvm pv
 einfo "Decrypting /dev/sda2..."
-/sbin/cryptsetup luksOpen /dev/sda2 sda2_crypt || exit 1
+/sbin/cryptsetup luksOpen /dev/sda2 sda2_crypt 
+einfo "Decryption /dev/sdb1..."
+/sbin/cryptsetup --key-file ${key_location}/${key_name} luksOpen /dev/sdb1 sdb1_storage
 
 einfo "Finding lvm devices..."
 /sbin/vgscan --mknodes
 einfo "Activating lvm devices..."
 /sbin/vgchange -a y
+
+# Umount key drive
+einfo "Ejecting key drive"
+umount -f $key_drive
 
 einfo "Mounting root device: $root ..."
 mount -n -t ext3 $root /root -o ro
@@ -79,11 +97,11 @@ mount -n -t ext3 $root /root -o ro
 if [ -n "$rescue" ]; then
 	ewarn "\"rescue\" kernel parameter received."
 	ewarn "Going to a rescue shell..."
-	exec $shell 
+	exec /bin/sh
 fi
 
 einfo "Unmounting /sys and /proc ..."
-umount -f /sys /proc
+umount -f /sys /proc 
 
 einfo "Changing to $root and handing over to init..."
 exec switch_root -c /dev/console /root "$init" "$@"
