@@ -10,6 +10,7 @@ X If drive/key is missing prompt for alternative location
 * Makefile extract and compress for ramdisk file.
 * issue or motd file?
 * Support for keys inside truecrypt containers
+* Support for keys inside StegFS (http://www.mcdonald.org.uk/StegFS/)
 * hash of drives to decrypt, example:
     drives = {
         ["drive1"] {device => "/dev/sda2", key=> "foobar.gpg"},
