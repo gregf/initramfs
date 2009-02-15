@@ -14,3 +14,9 @@ clean:
 	rm -f /boot/old_initramfs.cpio.gz
 	mv /boot/my_initramfs.cpio.gz /boot/old_initramfs.cpio.gz
 	rm -f my_initramfs.cpio.gz
+
+extract:
+	#extract initramfs.cpio.gz to tmpdir
+
+compress:
+	#compress contents for tmpdir
