@@ -10,6 +10,12 @@ TODO
 * Makefile extract and compress for ramdisk file.
 * issue or motd file?
 * Support for keys inside truecrypt containers
+* hash of drives to decrypt, example:
+    drives = {
+        ["drive1"] {device => "/dev/sda2", key=> "foobar.gpg"},
+        ["drive2"] {device => "/dev/sdb1", key => "lolcat.gpg"},
+        ["drive3"] {device => "/dev/sdc1", key => false },
+    }
 
 *) Not Done
 X) Completed
