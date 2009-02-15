@@ -16,6 +16,7 @@ TODO
         ["drive2"] {device => "/dev/sdb1", key => "lolcat.gpg"},
         ["drive3"] {device => "/dev/sdc1", key => false },
     }
+* Give some steps on how to use this and dmcrypt.
 
 *) Not Done
 X) Completed
