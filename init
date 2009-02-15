@@ -10,23 +10,45 @@
 # Modified by Greg Fitzgerald <netzdamon@gmail.com>
 
 PATH="/bin:/sbin:/usr/bin:/usr/sbin"
+root="/dev/mapper/Betsy-root"
+key_drive="/dev/sdc1"
+key_location="/mnt"
+key_name="storage_key.gpg"
+init="/sbin/init"
+debug=false
+modules="dm-crypt dm-mod serpent sha256 blowfish" #Any modules you might need to load
 
 einfo() { echo -ne " \033[32;01m*\033[0m ${@}\n"; }
 ewarn() { echo -ne " \033[33;01m*\033[0m ${@}\n"; }
 eerror() { echo -ne " \033[31;01m*\033[0m ${@}\n"; }
 
+askfor_key() {
+    while [ 1 ]
+    do
+        echo "Input Drive: (/dev/sda2)"
+        read loc
+        echo "Key File: (/secret/keys/mykey.gpg)"
+        read key
+        umount -f /mnt 
+        mount ${loc} /mnt || askfor_key
+        if [ -z "${loc}" ] || [ -z "${key}" ]
+        then
+            ewarn "You have to something dumbass!"
+        elif [ -b "${loc}" ] && [ -e "${key_location}/${key}" ]
+        then
+            einfo "found device! Trying again..."
+            /sbin/cryptsetup --key-file ${key_location}/${key} luksOpen /dev/sdb1 sdb1_storage || askfor_key
+            return
+        else
+            ewarn "device or key not found :("
+        fi
+    done
+}
+
 #wait a little to avoid trailing kernel output
 sleep 10 
 
-einfo "Gregf's initramfs booting..."
-
-root="/dev/mapper/Betsy-root"
-key_drive="/dev/sdc1"
-key_location="/usb"
-key_name="storage_key.gpg"
-init="/sbin/init"
-debug=false
-modules="dm-crypt dm-mod serpent sha256 blowfish" #Any modules you might need to load
+einfo "Initramfs booting..."
 
 mount -n -t proc none /proc
 mount -n -t sysfs none /sys
@@ -80,7 +102,7 @@ fi
 einfo "Decrypting /dev/sda2..."
 /sbin/cryptsetup luksOpen /dev/sda2 sda2_crypt 
 einfo "Decryption /dev/sdb1..."
-/sbin/cryptsetup --key-file ${key_location}/${key_name} luksOpen /dev/sdb1 sdb1_storage
+/sbin/cryptsetup --key-file ${key_location}/${key_name} luksOpen /dev/sdb1 sdb1_storage || askfor_key
 
 einfo "Finding lvm devices..."
 /sbin/vgscan --mknodes
@@ -88,7 +110,7 @@ einfo "Activating lvm devices..."
 /sbin/vgchange -a y
 
 # Umount key drive
-einfo "Ejecting key drive"
+einfo "Ejecting key drive..."
 umount -f $key_drive
 
 einfo "Mounting root device: $root ..."
