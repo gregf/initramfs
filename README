@@ -1,0 +1,9 @@
+Initramfs
+=========
+
+Greg Fitzgerald <netzdamon@gmail.com>
+
+This is a fork of Mike Kelly's initramfs git repo found here: http://git.pioto.org/gitweb/pioto-initramfs.git
+
+My goal is to extend this for easy use with any lvm2, and or raid system using
+dmcrypt.
