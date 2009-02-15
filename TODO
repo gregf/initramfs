@@ -2,7 +2,7 @@ TODO
 ======
 
 * Wait $seconds for key drive to become available
-* If drive/key is missing prompt for alternative location
+X If drive/key is missing prompt for alternative location
 * Loop through *.gpg attempting to find a working key send to > /dev/null 2>&1
 * Add some debugging/verbose errors
 * More options/settings for Raid systems
