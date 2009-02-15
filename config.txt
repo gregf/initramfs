@@ -21,8 +21,8 @@ dir /lib 0755 0 0
 
 dir /etc 755 0 0
 
-# dir for usb key
-dir /usb 755 0 0
+# location to try mounting device for keyfile 
+dir /mnt 755 0 0
 
 # utilities needed to do anything useful
 dir /bin 0755 0 0
