@@ -46,18 +46,8 @@ askfor_key() {
     done
 }
 
-sleep 10 
-
 mount -n -t proc none /proc
 mount -n -t sysfs none /sys
-
-#Disable kernel messages from popping onto the screen
-echo 0 > /proc/sys/kernel/printk
-
-#Clear the screen
-clear
-
-einfo "Initramfs booting..."
 
 CMDLINE=`cat /proc/cmdline`
 
@@ -80,6 +70,14 @@ if [ -z "$root" ]; then
     exec /bin/sh 
 fi
 
+#Disable kernel messages from popping onto the screen
+echo 0 > /proc/sys/kernel/printk
+
+#Clear the screen
+clear
+
+einfo "Initramfs booting..."
+
 # populate /dev with meaningful stuff
 einfo "Scanning for device nodes..."
 echo /sbin/mdev > /proc/sys/kernel/hotplug
@@ -94,6 +92,13 @@ done
 
 # raid
 #mdadm --assemble /dev/md2 /dev/sda2 /dev/sdb2
+
+einfo "Waiting for crypted key device..." 
+slumber=1800
+while [ ${slumber} -gt 0 -a ! -e "${key_drive}" ]; do 
+        /bin/sleep 0.1 
+        slumber=$(( ${slumber} - 1 )) 
+done 
 
 # Mount our usb key drive
 einfo "Mounting key drive..."
