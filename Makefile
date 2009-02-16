@@ -3,11 +3,11 @@ initramfs=initramfs.igz
 all: mount clean ramdisk copy umount
 
 mount:
-	sudo mount /boot || exit 1
+	sudo mount /boot || exit 0 
 umount:
-	sudo umount /boot
+	sudo umount /boot || exit 0
 copy:
-	cp ${initramfs} /boot || exit 1
+	cp ${initramfs} /boot 
 
 ramdisk: config.txt init
 	/usr/src/linux/usr/gen_init_cpio ./config.txt \
