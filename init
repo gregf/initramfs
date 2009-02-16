@@ -13,7 +13,7 @@ PATH="/bin:/sbin:/usr/bin:/usr/sbin"
 root="/dev/mapper/Betsy-root"
 key_drive="/dev/sdc1"
 key_location="/mnt"
-key_name="storage_key.gpg"
+key_name="key.gpg"
 init="/sbin/init"
 debug=false
 modules="dm-crypt dm-mod serpent sha256 blowfish" #Any modules you might need to load
@@ -25,6 +25,7 @@ eerror() { echo -ne " \033[31;01m*\033[0m ${@}\n"; }
 askfor_key() {
     while [ 1 ]
     do
+        ewarn "Could not find your key, please tell us where it is."
         echo "Input Drive: (/dev/sda2)"
         read loc
         echo "Key File: (/secret/keys/mykey.gpg)"
@@ -45,13 +46,19 @@ askfor_key() {
     done
 }
 
-#wait a little to avoid trailing kernel output
 sleep 10 
-
-einfo "Initramfs booting..."
 
 mount -n -t proc none /proc
 mount -n -t sysfs none /sys
+
+#Disable kernel messages from popping onto the screen
+echo 0 > /proc/sys/kernel/printk
+
+#Clear the screen
+clear
+
+einfo "Initramfs booting..."
+
 CMDLINE=`cat /proc/cmdline`
 
 for param in $CMDLINE ; do
@@ -90,7 +97,13 @@ done
 
 # Mount our usb key drive
 einfo "Mounting key drive..."
-mount -o ro $key_drive $key_location
+if [ -b "${key_drive}" ]
+then
+    mount -o ro $key_drive $key_location 
+else
+    askfor_key
+fi
+
 if $debug; then
     einfo "Testing key drive..."
     # Make a real test this is going to pass either way since /usb is already
@@ -100,7 +113,8 @@ fi
 
 # now, we decrypt our lvm pv
 einfo "Decrypting /dev/sda2..."
-/sbin/cryptsetup luksOpen /dev/sda2 sda2_crypt 
+#/sbin/cryptsetup luksOpen /dev/sda2 sda2_crypt 
+/sbin/cryptsetup --key-file ${key_location}/${key_name} luksOpen /dev/sda2 sda2_crypt || askfor_key
 einfo "Decryption /dev/sdb1..."
 /sbin/cryptsetup --key-file ${key_location}/${key_name} luksOpen /dev/sdb1 sdb1_storage || askfor_key
 
