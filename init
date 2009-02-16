@@ -34,7 +34,7 @@ askfor_key() {
         mount -o ro ${loc} ${key_location} || askfor_key
         if [ -z "${loc}" ] || [ -z "${key}" ]
         then
-            ewarn "You have to something dumbass!"
+            ewarn "You have to enter something dumbass!"
         elif [ -b "${loc}" ] && [ -e "${key_location}/${key}" ]
         then
             einfo "found device! Trying again..."
@@ -43,6 +43,18 @@ askfor_key() {
         else
             ewarn "device or key not found :("
         fi
+    done
+}
+
+waitfor_drives() {
+    for device in $@; do
+        ewarn "Waiting for device ${device}..." 
+        slumber=1800
+        while [ ${slumber} -gt 0 -a ! -e "${device}" ]; do 
+                /bin/sleep 0.1 
+                slumber=$(( ${slumber} - 1 )) 
+        done 
+        einfo "Found ${device}!" 
     done
 }
 
@@ -93,12 +105,7 @@ done
 # raid
 #mdadm --assemble /dev/md2 /dev/sda2 /dev/sdb2
 
-einfo "Waiting for crypted key device..." 
-slumber=1800
-while [ ${slumber} -gt 0 -a ! -e "${key_drive}" ]; do 
-        /bin/sleep 0.1 
-        slumber=$(( ${slumber} - 1 )) 
-done 
+waitfor_drives /dev/sdc1 /dev/sda2 /dev/sdb1
 
 # Mount our usb key drive
 einfo "Mounting key drive..."
