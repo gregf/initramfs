@@ -1,23 +1,20 @@
 TODO
 ======
 
-* Wait $seconds for key drive to become available
+X Wait $seconds for key drive to become available
 X If drive/key is missing prompt for alternative location
 * Loop through *.gpg attempting to find a working key send to > /dev/null 2>&1
 * Add some debugging/verbose errors
 * More options/settings for Raid systems
 * $attempts to get passphrase right, 0 to disable.
-* Makefile extract and compress for ramdisk file.
+X Makefile extract and compress for ramdisk file.
+* Makefile build steps for asciidoc
 * issue or motd file?
 * Support for keys inside truecrypt containers
-* Support for keys inside StegFS (http://www.mcdonald.org.uk/StegFS/)
-* hash of drives to decrypt, example:
-    drives = {
-        ["drive1"] {device => "/dev/sda2", key=> "foobar.gpg"},
-        ["drive2"] {device => "/dev/sdb1", key => "lolcat.gpg"},
-        ["drive3"] {device => "/dev/sdc1", key => false },
-    }
 * Give some steps on how to use this and dmcrypt.
+* use /proc/cmdline to get options for init just set basic defaults in the script.
+* make /scripts/functions.sh and include it in init
+* support more locations dhcp + nfs? ntfs-3g? vfat?
 
 *) Not Done
 X) Completed
