@@ -15,6 +15,7 @@ dir /dev 0755 0 0
 nod /dev/console 0600 0 0 c 5 1
 
 # mount point for our real root
+dir /newroot 0700 0 0
 dir /root 0700 0 0
 
 dir /lib 0755 0 0
@@ -121,6 +122,8 @@ slink /usr/bin/basename ../../bin/busybox 777 0 0
 slink /usr/bin/bunzip2 ../../bin/busybox 777 0 0
 slink /sbin/halt ../bin/busybox 777 0 0
 slink /sbin/init ../bin/busybox 777 0 0
+slink /sbin/blkid ../bin/busybox 777 0 0
+slink /sbin/findfs ../bin/busybox 777 0 0
 slink /sbin/klogd ../bin/busybox 777 0 0
 slink /sbin/route ../bin/busybox 777 0 0
 slink /sbin/poweroff ../bin/busybox 777 0 0
