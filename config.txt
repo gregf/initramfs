@@ -6,6 +6,7 @@
 
 # my init script
 file /init /home/gregf/initramfs/init 0755 0 0
+file /functions.sh /home/gregf/initramfs/lib/scripts/functions.sh 0644 0 0
 
 # fake udevadm to shut up cryptsetup
 file /sbin/udevadm /home/gregf/initramfs/udevadm 0755 0 0
@@ -24,6 +25,9 @@ dir /etc 755 0 0
 
 # location to try mounting device for keyfile 
 dir /mnt 755 0 0
+
+# location for some misc scripts
+dir /lib/scripts 0755 0 0
 
 # utilities needed to do anything useful
 dir /bin 0755 0 0
