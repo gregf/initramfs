@@ -6,7 +6,7 @@ X If drive/key is missing prompt for alternative location
 * Loop through *.gpg attempting to find a working key send to > /dev/null 2>&1
 * Add some debugging/verbose errors
 * More options/settings for Raid systems
-* $attempts to get passphrase right, 0 to disable.
+* $attempts to get paraphrase right, 0 to disable.
 X Makefile extract and compress for ramdisk file.
 * Makefile build steps for asciidoc
 * issue or motd file?
@@ -17,6 +17,18 @@ X Makefile extract and compress for ramdisk file.
 * support more locations dhcp + nfs? ntfs-3g? vfat?
 * use cryptsetup isLuks to test if a drive is encrypted before we try to open it.
 * Use /newroot rather than /root, less confusing for the casual reader.
+* Grub Options:
+    rescue=y|n # Loads rescue shell
+    quiet=y|n 
+    debug=y|n # splits out a little debugging info, possible logs to a file?
+    drive[0-9]=UUID|LABEL:key.(gpg|key)|false # specify a key or false for
+    paraphrase.
+    init=/sbin/init # init initramfs passes off to
+    root=/dev/sdaX # root partion (where init lives)
+    timeout=30 # seconds to wait for drives to appear
+* unset variables we assign in case the main init system does not clear them.
+    
+
 
 *) Not Done
 X) Completed
