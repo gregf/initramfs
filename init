@@ -100,7 +100,7 @@ einfo "Ejecting key drive..."
 umount -f $key_location
 
 einfo "Mounting root device: $root ..."
-mount -n -t ext3 $root /root -o ro
+mount -n -t ext3 $root /newroot -o ro
 
 if [ -n "$rescue" ]; then
 	ewarn "\"rescue\" kernel parameter received."
@@ -108,14 +108,21 @@ if [ -n "$rescue" ]; then
 	exec /bin/sh
 fi
 
-einfo "Unmounting /sys and /proc ..."
-umount -f /sys /proc 
-
 # Unset variables incase the init script we pass off to doesn't clear them for
 # us.
 undo_vars
 
-einfo "Changing to $root and handing over to init..."
-exec switch_root -c /dev/console /root "$init" "$@"
+#Check if $init exists and is executable
+if [[ -x "/newroot/${init}" ]] ; then
+    einfo "Unmounting /sys and /proc ..."
+    umount -f /sys /proc 
+
+    einfo "Changing to $root and handing over to init..."
+    exec switch_root -c /dev/console /newroot "$init" "$@"
+else
+    #This will only be run if the exec above failed
+    eerror "Failed to switch_root, dropping to a shell"
+    exec /bin/sh
+fi
 
 # vim: set ft=sh tw=78:
