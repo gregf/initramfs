@@ -54,7 +54,7 @@ waitfor_drives() {
 decrypt_drives() {
     if [ -z ${DRIVES} ]; then
         eerror "No Drives to decrypt!"
-        exit 0 
+        return
     fi
     for dk in ${DRIVES[@]}
     do
