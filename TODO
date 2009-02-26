@@ -15,7 +15,7 @@ X use /proc/cmdline to get options for init just set basic defaults in the scrip
 X make /scripts/functions.sh and include it in init
 * support more locations dhcp + nfs? ntfs-3g? vfat?
 * use cryptsetup isLuks to test if a drive is encrypted before we try to open it.
-* Use /newroot rather than /root, less confusing for the casual reader.
+X Use /newroot rather than /root, less confusing for the casual reader.
 * Grub Options:
     rescue=y|n # Loads rescue shell
     quiet=y|n 
