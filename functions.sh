@@ -64,10 +64,14 @@ decrypt_drives() {
         
         einfo "Decrypting ${drive}..."
 
-        if [ "${key}" == "false" ]; then
-            /sbin/cryptsetup luksOpen ${drive} sda2_crypt || askfor_key
-        else
-            /sbin/cryptsetup --key-file ${key_location}/${key} luksOpen ${drive} ${cname}_crypt || askfor_key
+        if ! $(/sbin/cryptsetup isLuks ${drive}); then 
+            eerror "${drive} is not encrypted dipshit!"
+        else 
+            if [ "${key}" == "false" ]; then
+                /sbin/cryptsetup luksOpen ${drive} sda2_crypt || askfor_key
+            else
+                /sbin/cryptsetup --key-file ${key_location}/${key} luksOpen ${drive} ${cname}_crypt || askfor_key
+            fi
         fi
     done
 }
