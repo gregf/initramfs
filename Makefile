@@ -26,3 +26,6 @@ extract: ramdisk
 compress:
 	cd init_fs && find . | cpio -H newc -o > ../initramfs.cpio
 	cat initramfs.cpio | gzip > ${initramfs} 
+
+grabbash:
+	#TODO Grab the right bash-static from debian.org
