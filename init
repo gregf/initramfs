@@ -111,6 +111,10 @@ fi
 einfo "Unmounting /sys and /proc ..."
 umount -f /sys /proc 
 
+# Unset variables incase the init script we pass off to doesn't clear them for
+# us.
+undo_vars
+
 einfo "Changing to $root and handing over to init..."
 exec switch_root -c /dev/console /root "$init" "$@"
 
