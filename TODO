@@ -27,6 +27,7 @@ X Use /newroot rather than /root, less confusing for the casual reader.
     root=/dev/sdaX # root partion (where init lives)
     timeout=30 # seconds to wait for drives to appear
 X unset variables we assign in case the main init system does not clear them.
+* Do not store bash in git, write grabbash section of makefile to get it from debian.org.
     
 
 
