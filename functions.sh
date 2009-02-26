@@ -42,7 +42,7 @@ askfor_key() {
 waitfor_drives() {
     for device in $@; do
         ewarn "Waiting for device ${device}..." 
-        slumber=1800
+        slumber=${TIMEOUT}
         while [ ${slumber} -gt 0 -a ! -b "${device}" ]; do 
                 /bin/sleep 0.1 
                 slumber=$(( ${slumber} - 1 )) 

@@ -35,6 +35,10 @@ for param in $CMDLINE ; do
         drive*)
             DRIVES+=(${param##*=})
 		;;
+        timeout=*)
+            TIMEOUT=${param##*=}
+        ;;
+        
 	esac
 done
 
