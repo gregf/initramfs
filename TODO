@@ -14,8 +14,9 @@ X Makefile extract and compress for ramdisk file.
 X use /proc/cmdline to get options for init just set basic defaults in the script.
 X make /scripts/functions.sh and include it in init
 * support more locations dhcp + nfs? ntfs-3g? vfat?
-* use cryptsetup isLuks to test if a drive is encrypted before we try to open it.
+X use cryptsetup isLuks to test if a drive is encrypted before we try to open it.
 X Use /newroot rather than /root, less confusing for the casual reader.
+* Make waitfor_drives a bit less verbose
 * Grub Options:
     rescue=y|n # Loads rescue shell
     quiet=y|n 

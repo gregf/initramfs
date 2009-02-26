@@ -7,3 +7,13 @@ This is a fork of Mike Kelly's initramfs git repo found here: http://git.pioto.o
 
 My goal is to extend this for easy use with any lvm2, and or raid system using
 dmcrypt.
+
+Installation
+============
+
+See docs/INSTALL
+
+License
+=======
+
+See LICENSE
