@@ -1,4 +1,4 @@
-#!/bin/ash
+#!/bin/bash
 # Copyright 2007-2008 Mike Kelly <pioto@pioto.org>
 # Released under the terms of the GNU General Public License v2
 #
@@ -11,14 +11,13 @@ PATH="/bin:/sbin:/usr/bin:/usr/sbin"
 root="/dev/mapper/Betsy-root"
 key_drive="/dev/sdc1"
 key_location="/mnt"
-key_name="key.gpg"
+#key_name="key.gpg" #obsolete
 init="/sbin/init"
-debug=false
+#debug=false # not used yet
 modules="dm-crypt dm-mod serpent sha256 blowfish" #Any modules you might need to load
 
 # Include our functions
-. /lib/scripts/functions.sh
-
+. /scripts/functions.sh
 
 mount -n -t proc none /proc
 mount -n -t sysfs none /sys
@@ -29,10 +28,13 @@ for param in $CMDLINE ; do
 	case "$param" in
 		root=*|init=*)
 			eval "$param"
-			;;
+		;;
 		rescue)
 			rescue="y"
-			;;
+		;;
+        drive*)
+            DRIVES+=(${param##*=})
+		;;
 	esac
 done
 
@@ -78,19 +80,15 @@ else
     askfor_key
 fi
 
-if $debug; then
-    einfo "Testing key drive..."
-    # Make a real test this is going to pass either way since /usb is already
-    # created.
-    touch /usb/it_got_mounted || eerror "unable to write to usb key, not being mounted"
-fi
+#if $debug; then
+    #einfo "Testing key drive..."
+    ## Make a real test this is going to pass either way since /usb is already
+    ## created.
+    #touch /usb/it_got_mounted || eerror "unable to write to usb key, not being mounted"
+#fi
 
 # now, we decrypt our lvm pv
-einfo "Decrypting /dev/sda2..."
-#/sbin/cryptsetup luksOpen /dev/sda2 sda2_crypt 
-/sbin/cryptsetup --key-file ${key_location}/${key_name} luksOpen /dev/sda2 sda2_crypt || askfor_key
-einfo "Decryption /dev/sdb1..."
-/sbin/cryptsetup --key-file ${key_location}/${key_name} luksOpen /dev/sdb1 sdb1_storage || askfor_key
+decrypt_drives
 
 einfo "Finding lvm devices..."
 /sbin/vgscan --mknodes
