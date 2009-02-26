@@ -29,3 +29,4 @@ compress:
 
 grabbash:
 	#TODO Grab the right bash-static from debian.org
+	#http://packages.debian.org/stable/shells/bash-static
