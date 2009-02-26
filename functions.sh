@@ -68,4 +68,16 @@ decrypt_drives() {
     done
 }
 
+undo_vars() {
+    unset key_location
+    unset key
+    unset DRIVES
+    unset loc
+    unset device
+    unset drive
+    unset cname
+    unset dk
+    unset slumber
+}
+
 # vim: set ft=sh tw=78:
