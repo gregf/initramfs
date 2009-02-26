@@ -4,13 +4,6 @@
 # this file assumes sys-apps/busybox and sys-fs/e2fsprogs are built with
 # USE=static
 
-# my init script
-file /init /home/gregf/initramfs/init 0755 0 0
-file /functions.sh /home/gregf/initramfs/lib/scripts/functions.sh 0644 0 0
-
-# fake udevadm to shut up cryptsetup
-file /sbin/udevadm /home/gregf/initramfs/udevadm 0755 0 0
-
 # basic device nodes
 dir /dev 0755 0 0
 nod /dev/console 0600 0 0 c 5 1
@@ -18,6 +11,8 @@ nod /dev/console 0600 0 0 c 5 1
 # mount point for our real root
 dir /newroot 0700 0 0
 dir /root 0700 0 0
+
+dir /scripts 0755 0 0
 
 dir /lib 0755 0 0
 
@@ -158,3 +153,13 @@ dir /var/lock 755 0 0
 # proc and sysfs mountpoints
 dir /proc 755 0 0
 dir /sys 755 0 0
+
+#debians bash-static
+file /bin/bash /home/gregf/initramfs/bin/bash-static-amd64 0755 0 0
+
+# my init script
+file /init /home/gregf/initramfs/init 0755 0 0
+# Functions for init script
+file /scripts/functions.sh /home/gregf/initramfs/functions.sh 0644 0 0
+# fake udevadm to shut up cryptsetup
+file /sbin/udevadm /home/gregf/initramfs/udevadm 0755 0 0
