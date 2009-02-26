@@ -1,4 +1,4 @@
-#!/bin/ash
+#!/bin/bash
 # Copyright 2007-2008 Mike Kelly <pioto@pioto.org>
 # Released under the terms of the GNU General Public License v2
 #
@@ -48,6 +48,23 @@ waitfor_drives() {
                 slumber=$(( ${slumber} - 1 )) 
         done 
         einfo "Found ${device}!" 
+    done
+}
+
+decrypt_drives() {
+    for dk in ${DRIVES[@]}
+    do
+        drive=`echo -n $dk | cut -d: -f1`
+        key=`echo -n $dk | cut -d: -f2`
+        cname=`echo -n $drive | cut -d"/" -f3`
+        
+        einfo "Decrypting ${drive}..."
+
+        if [ "${key}" == "false" ]; then
+            /sbin/cryptsetup luksOpen ${drive} sda2_crypt || askfor_key
+        else
+            /sbin/cryptsetup --key-file ${key_location}/${key} luksOpen ${drive} ${cname}_crypt || askfor_key
+        fi
     done
 }
 
