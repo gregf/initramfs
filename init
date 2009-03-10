@@ -104,7 +104,7 @@ einfo "Ejecting key drive..."
 umount -f $key_location
 
 einfo "Mounting root device: $root ..."
-mount -n -t ext3 $root /newroot -o ro
+mount -n -t auto $root /newroot -o ro
 
 if [ -n "$rescue" ]; then
 	ewarn "\"rescue\" kernel parameter received."
