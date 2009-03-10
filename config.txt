@@ -155,11 +155,11 @@ dir /proc 755 0 0
 dir /sys 755 0 0
 
 #debians bash-static
-file /bin/bash /home/gregf/initramfs/bin/bash-static-amd64 0755 0 0
+file /bin/bash bin/bash-static-amd64 0755 0 0
 
 # my init script
-file /init /home/gregf/initramfs/init 0755 0 0
+file /init init 0755 0 0
 # Functions for init script
-file /scripts/functions.sh /home/gregf/initramfs/functions.sh 0644 0 0
+file /scripts/functions.sh functions.sh 0644 0 0
 # fake udevadm to shut up cryptsetup
-file /sbin/udevadm /home/gregf/initramfs/udevadm 0755 0 0
+file /sbin/udevadm udevadm 0755 0 0
