@@ -1,0 +1,24 @@
+Initramfs
+========
+
+**Git**:        [http://github.com/gregf/initramfs] (http://github.com/gregf/initramfs)  
+**Author**:     Greg Fitzgerald  
+**Copyright**:  2009-2010   
+**License**:    MIT License  
+
+About
+-----
+This is a fork of Mike Kelly's initramfs git repo found here: http://git.pioto.org/gitweb/pioto-initramfs.git
+
+My goal is to extend this for easy use with any lvm2, and or raid system using
+cryptsetup.
+
+Installation
+------------
+
+Edit config.txt, init.sh, and Makefile as needed for now. Not fully ready for use, play with it at your own risk.
+
+License
+-------
+
+See LICENSE
