@@ -8,7 +8,7 @@
 
 # Basic configuration
 PATH="/bin:/sbin:/usr/bin:/usr/sbin"
-root="/dev/mapper/Betsy-root"
+root="/dev/mapper/Exherbo-root"
 key_drive="/dev/sdc1"
 key_location="/mnt"
 #key_name="key.gpg" #obsolete
@@ -25,21 +25,20 @@ mount -n -t sysfs none /sys
 CMDLINE=`cat /proc/cmdline`
 
 for param in $CMDLINE ; do
-	case "$param" in
-		root=*|init=*)
-			eval "$param"
-		;;
-		rescue)
-			rescue="y"
-		;;
-        drive*)
-            DRIVES+=(${param##*=})
-		;;
-        timeout=*)
-            TIMEOUT=${param##*=}
-        ;;
-        
-	esac
+    case "$param" in
+    root=*|init=*)
+        eval "$param"
+    ;;
+    rescue)
+        rescue="y"
+    ;;
+    drive*)
+        DRIVES+=(${param##*=})
+    ;;
+    timeout=*)
+        TIMEOUT=${param##*=}
+    ;;
+    esac
 done
 
 if [ -z "$root" ]; then
@@ -47,7 +46,7 @@ if [ -z "$root" ]; then
     eerror "Please append a correct \"root=\" boot option"
     eerror "Dropping you to a limited shell."
     eerror "press CTRL-ALT-Del for reboot"
-    exec /bin/sh 
+    exec /bin/sh
 fi
 
 #Disable kernel messages from popping onto the screen
@@ -66,20 +65,20 @@ mdev -s
 # Load modules if you are using them.
 einfo "Loading any necessary modules."
 for i in $modules;
-do 
+do
     modprobe $i >/dev/null 2>&1
 done
 
 # raid
 #mdadm --assemble /dev/md2 /dev/sda2 /dev/sdb2
 
-waitfor_drives /dev/sdc1 /dev/sda2 /dev/sdb1
+waitfor_drives /dev/sdc1 /dev/sda2 /dev/sdb2
 
 # Mount our usb key drive
 einfo "Mounting key drive..."
 if [ -b "${key_drive}" ]
 then
-    mount -o ro $key_drive $key_location 
+    mount -o ro $key_drive $key_location
 else
     askfor_key
 fi
@@ -107,9 +106,9 @@ einfo "Mounting root device: $root ..."
 mount -n -t auto $root /newroot -o ro
 
 if [ -n "$rescue" ]; then
-	ewarn "\"rescue\" kernel parameter received."
-	ewarn "Going to a rescue shell..."
-	exec /bin/sh
+    ewarn "\"rescue\" kernel parameter received."
+    ewarn "Going to a rescue shell..."
+    exec /bin/sh
 fi
 
 # Unset variables incase the init script we pass off to doesn't clear them for
@@ -119,7 +118,7 @@ undo_vars
 #Check if $init exists and is executable
 if [[ -x "/newroot/${init}" ]] ; then
     einfo "Unmounting /sys and /proc ..."
-    umount -f /sys /proc 
+    umount -f /sys /proc
 
     einfo "Changing to $root and handing over to init..."
     exec switch_root -c /dev/console /newroot "$init" "$@"
