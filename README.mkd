@@ -4,7 +4,7 @@ Initramfs
 **Git**:        [http://github.com/gregf/initramfs] (http://github.com/gregf/initramfs)  
 **Author**:     Greg Fitzgerald  
 **Copyright**:  2009-2010   
-**License**:    MIT License  
+**License**:    GPL-2  
 
 About
 -----
