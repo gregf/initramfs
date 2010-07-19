@@ -21,7 +21,7 @@ askfor_key() {
         read loc
         echo "Key File: (/secret/keys/mykey.gpg)"
         read key
-        umount -f ${key_location} 
+        umount -f ${key_location}
         mount -o ro ${loc} ${key_location} || askfor_key
         if [ -z "${loc}" ] || [ -z "${key}" ]
         then
@@ -41,13 +41,13 @@ askfor_key() {
 # askfor_key
 waitfor_drives() {
     for device in $@; do
-        ewarn "Waiting for device ${device}..." 
-        slumber=${TIMEOUT}
-        while [ ${slumber} -gt 0 -a ! -b "${device}" ]; do 
-                /bin/sleep 0.1 
-                slumber=$(( ${slumber} - 1 )) 
-        done 
-        einfo "Found ${device}!" 
+        ewarn "Waiting for device ${device}..."
+        slumber=1800
+        while [ ${slumber} -gt 0 -a ! -b "${device}" ]; do
+                /bin/sleep 0.1
+                slumber=$(( ${slumber} - 1 ))
+        done
+        einfo "Found ${device}!"
     done
 }
 
@@ -61,12 +61,12 @@ decrypt_drives() {
         drive=`echo -n $dk | cut -d: -f1`
         key=`echo -n $dk | cut -d: -f2`
         cname=`echo -n $drive | cut -d"/" -f3`
-        
+
         einfo "Decrypting ${drive}..."
 
-        if ! $(/sbin/cryptsetup isLuks ${drive}); then 
+        if ! $(/sbin/cryptsetup isLuks ${drive}); then
             eerror "${drive} is not encrypted dipshit!"
-        else 
+        else
             if [ "${key}" == "false" ]; then
                 /sbin/cryptsetup luksOpen ${drive} sda2_crypt || askfor_key
             else
