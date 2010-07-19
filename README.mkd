@@ -17,8 +17,3 @@ Installation
 ------------
 
 Edit config.txt, init.sh, and Makefile as needed for now. Not fully ready for use, play with it at your own risk.
-
-License
--------
-
-See LICENSE
