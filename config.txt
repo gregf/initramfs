@@ -31,7 +31,7 @@ dir /usr 755 0 0
 dir /usr/lib 755 0 0
 dir /usr/sbin 755 0 0
 dir /usr/bin 755 0 0
-file /bin/busybox /bin/bb 0755 0 0
+file /bin/busybox /bin/busybox-static 0755 0 0
 # some busybox symlinks
 slink /bin/dd busybox 777 0 0
 slink /bin/cp busybox 777 0 0
@@ -136,13 +136,15 @@ slink /sbin/swapon ../bin/busybox 777 0 0
 slink /sbin/mdev ../bin/busybox 777 0 0
 slink /usr/sbin/chroot ../../bin/busybox 777 0 0
 # end of busybox insanity
+
 # cryptsetup, for opening our encrypted swap
-file /sbin/cryptsetup /sbin/cryptsetup 0755 0 0
+file /sbin/cryptsetup /sbin/cryptsetup.static 0755 0 0
+
 # lvm, for finding our encrypted swap
 # lvm configuration
 dir /etc/lvm 755 0 0
 file /etc/lvm/lvm.conf /etc/lvm/lvm.conf 644 0 0
-file /sbin/lvm /sbin/lvm 555 0 0
+file /sbin/lvm /sbin/lvm.static 555 0 0
 slink /sbin/vgchange lvm 777 0 0
 slink /sbin/vgscan lvm 777 0 0
 
@@ -159,7 +161,9 @@ file /bin/bash bin/bash-static-amd64 0755 0 0
 
 # my init script
 file /init init 0755 0 0
+
 # Functions for init script
 file /scripts/functions.sh functions.sh 0644 0 0
+
 # fake udevadm to shut up cryptsetup
-file /sbin/udevadm udevadm 0755 0 0
+#file /sbin/udevadm udevadm 0755 0 0
